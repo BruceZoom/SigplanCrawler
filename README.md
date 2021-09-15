@@ -4,7 +4,7 @@ For crawling papers from sigplan conferences.
 # Requirements
 Python 3, BeautifulSoup4
 
-# Useage
+# Usage
 The crawler has three command: "crawl", "download", and "abstract".
 ```
 usage: crawler.py [-h] [--url URL] [--skip] [--skip_download]
