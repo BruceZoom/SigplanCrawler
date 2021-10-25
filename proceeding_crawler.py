@@ -14,10 +14,13 @@ def crawl_abstrct(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
     abstract = soup.find(class_='Abstract').find_all(class_='Para')
-    return '\n'.join([str(p) for p in abstract])
+    return '<p>' + ('</p><p>'.join([p.text for p in abstract])) + '</p>'
 
 def crawl(url, savedir):
     domain = urlparse(url).netloc
+
+    if not os.path.exists(savedir):
+        os.makedirs(savedir)
 
     print("Loading main page...")
     response = requests.get(url)
@@ -33,7 +36,7 @@ def crawl(url, savedir):
         
         papers = soup.find_all(class_='chapter-item')
         for i, paper in enumerate(papers):
-            print("page {0} paper {1}/{2}".format(page, i, len(papers)))
+            print("page {0}/{1} paper {2}/{3}".format(page, maxpage, i+1, len(papers)))
 
             title = paper.find(class_='content-type-list__link')
             author = paper.find(class_='content-type-list__text')
@@ -44,12 +47,9 @@ def crawl(url, savedir):
             md += "- Abstract: {}\n".format(abstract)
             md += "\n"
 
-    
-    if not os.path.exists(savedir):
-        os.makedirs(savedir)
-    
-    with open(os.path.join(savedir, 'abstract.md'), 'w', encoding='utf-8') as f:
-        f.write(md)
+        print("Saving...")
+        with open(os.path.join(savedir, 'abstract.md'), 'w', encoding='utf-8') as f:
+            f.write(md)
 
 
 if __name__ == "__main__":
